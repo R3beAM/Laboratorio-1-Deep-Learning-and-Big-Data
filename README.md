@@ -6,7 +6,7 @@ As a professor, in this repo you will find all the practical examples done durin
 root
 │   README.md 
 │
-└───kafka_example    <--- Project's root folder
+└───kafka_example    <--- kafka example's root folder
 │   │   README.md
 │   │   docker-compose.yml
 │   │   requirements.txt
