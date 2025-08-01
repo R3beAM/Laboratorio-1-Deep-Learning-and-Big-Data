@@ -1,4 +1,4 @@
-import happybase==1.2.0
+import happybase
 
 def connect_to_hbase(host='localhost', port=9090):
     try:
