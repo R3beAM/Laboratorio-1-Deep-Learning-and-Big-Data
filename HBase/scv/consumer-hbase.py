@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import happybase
 
 def connect_to_hbase(host='localhost', port=9090):
