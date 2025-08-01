@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  hbase:
+    image: dajobe/hbase
+    container_name: hbase
+    ports:
+      - "16010:16010"  # HBase Web UI
+      - "9090:9090"    # Thrift server
+      - "2181:2181"    # Zookeeper
+    environment:
+      - HBASE_MANAGES_ZK=true
+    command: >
+      sh -c "
+        /opt/hbase/bin/start-hbase.sh &&
+        /opt/hbase/bin/hbase-daemon.sh start thrift &&
+        tail -f /dev/null
+      "
