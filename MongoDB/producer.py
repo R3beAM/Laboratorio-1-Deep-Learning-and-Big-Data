@@ -1,18 +1,29 @@
 from pymongo import MongoClient
 import time
+import random
 
 def main():
     client = MongoClient("mongodb://admin:admin123@localhost:27017/")
-    db = client["testdb"]
-    collection = db["messages"]
+    db = client["company"]
+    employees = db["employees"]
 
-    count = 0
+    names = ["Laura Díaz", "Carlos Pérez", "Ana Gómez", "Juan Ríos", "Sofía Mena"]
+    departments = ["Ventas", "TI", "Marketing", "RRHH", "Finanzas"]
+
+    employee_id = 1
     while True:
-        doc = {"message": f"Mensaje número {count}"}
-        collection.insert_one(doc)
+        doc = {
+            "employee_id": employee_id,
+            "name": random.choice(names),
+            "department": random.choice(departments),
+            "salary": random.randint(30000, 80000),
+            "processed": False
+        }
+        employees.insert_one(doc)
         print(f"Inserted: {doc}")
-        count += 1
-        time.sleep(2)  # Espera 2 segundos antes de enviar otro mensaje
+        employee_id += 1
+        time.sleep(3)
 
 if __name__ == "__main__":
     main()
+
