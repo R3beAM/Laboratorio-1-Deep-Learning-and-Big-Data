@@ -1,24 +1,29 @@
 from pymongo import MongoClient
 import time
+import random
 
 def main():
     client = MongoClient("mongodb://admin:admin123@localhost:27017/")
-    db = client["testdb"]
-    collection = db["messages"]
+    db = client["company"]
+    employees = db["employees"]
 
-    last_id = None
+    names = ["Laura Díaz", "Carlos Pérez", "Ana Gómez", "Juan Ríos", "Sofía Mena"]
+    departments = ["Ventas", "TI", "Marketing", "RRHH", "Finanzas"]
+
+    employee_id = 1
     while True:
-        query = {}
-        if last_id:
-            query = {"_id": {"$gt": last_id}}
-
-        new_docs = list(collection.find(query).sort("_id", 1))
-
-        for doc in new_docs:
-            print(f"Read: {doc}")
-            last_id = doc["_id"]
-
-        time.sleep(3)  # Espera 3 segundos antes de revisar nuevos mensajes
+        doc = {
+            "employee_id": employee_id,
+            "name": random.choice(names),
+            "department": random.choice(departments),
+            "salary": random.randint(30000, 80000),
+            "processed": False
+        }
+        employees.insert_one(doc)
+        print(f"Inserted: {doc}")
+        employee_id += 1
+        time.sleep(3)
 
 if __name__ == "__main__":
     main()
+
