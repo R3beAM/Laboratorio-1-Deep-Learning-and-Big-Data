@@ -1,0 +1,8 @@
+import redis
+
+# Conexión a Redis (en localhost, puerto 6379)
+r = redis.Redis(host='localhost', port=6379, db=0)
+
+# Prueba de escritura y lectura
+r.set('clave', 'valor')
+print(r.get('clave'))  # b'valor'
