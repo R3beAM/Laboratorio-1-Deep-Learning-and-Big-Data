@@ -1,11 +1,20 @@
 kaggle
-mkdir -p ~/.kaggle
-mv ~/Downloads/kaggle.json ~/.kaggle/
-chmod 600 ~/.kaggle/kaggle.json
-kaggle datasets download -d mkechinov/ecommerce-purchase-history-from-electronics-store
-unzip ecommerce-purchase-history-from-electronics-store.zip
-pip install pandas
-import pandas as pd
+import os
+from kaggle.api.kaggle_api_extended import KaggleApi
 
-df = pd.read_csv("kz.csv")
-print(df.head())
+# Autenticación
+api = KaggleApi()
+api.authenticate()
+
+# Descarga del dataset completo y descompresión
+dataset_name = 'mkechinov/ecommerce-purchase-history-from-electronics-store'
+destino = 'datos_kaggle'  # carpeta donde se guardará
+
+# Crear carpeta si no existe
+os.makedirs(destino, exist_ok=True)
+
+# Descargar y descomprimir
+api.dataset_download_files(dataset_name, path=destino, unzip=True)
+
+print(f"Dataset descargado en la carpeta: {destino}")
+
