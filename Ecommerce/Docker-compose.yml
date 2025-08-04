@@ -13,7 +13,6 @@ services:
 
   hbase:
     image: dajobe/hbase
-      hbase:
     container_name: hbase_alt
     ports:
       - "16010:16010"
@@ -26,8 +25,8 @@ services:
     container_name: producer
     depends_on:
       - mongo
-      - redis
-      - hbase
+      - redis_alt
+      - hbase_alt
     volumes:
       - ./datos_kaggle:/data
     environment:
