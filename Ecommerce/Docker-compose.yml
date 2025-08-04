@@ -9,7 +9,7 @@ services:
     image: redis:latest
     container_name: redis_alt
     ports:
-      - "6380:6379"  # Puerto cambiado en el host
+      - "6380:6379"  # puerto del host cambiado
 
   hbase:
     image: dajobe/hbase
@@ -21,7 +21,7 @@ services:
   producer:
     build:
       context: .
-    dockerfile: producer/Dockerfile
+      dockerfile: producer/Dockerfile
     container_name: producer
     depends_on:
       - mongo
@@ -44,4 +44,4 @@ services:
     environment:
       - MONGO_URI=mongodb://mongo:27017
       - REDIS_HOST=redis_alt
-      - HBASE_HOST=hbase_alt
+      - HBASE_HOST=hbase_
