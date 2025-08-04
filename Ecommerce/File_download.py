@@ -43,6 +43,11 @@ if os.path.exists(csv_path):
     print(f"\n🧾 Leyendo 'kz.csv'...\n")
     df = pd.read_csv(csv_path)
 
+    # Rellenar nulos en 'Brand'
+if 'Brand' in df.columns:
+    print("\n🛠️ Rellenando valores nulos en 'Brand' con 'Unknown'...\n")
+    df['Brand'] = df['Brand'].fillna('Unknown')
+
     # -------- Análisis básico --------
     print("\n📋 Primeras filas del dataset:\n")
     print(df.head())
@@ -61,10 +66,6 @@ if os.path.exists(csv_path):
         if col in df.columns:
             print(f"\n📦 Conteo de valores únicos en '{col}':\n")
             print(df[col].value_counts().head(10))
-
-    if 'Brand' in df.columns:
-    print("\n🛠️ Rellenando valores nulos en 'Brand' con 'Unknown'...\n")
-    df['Brand'] = df['Brand'].fillna('Unknown')
     
     df.to_csv(os.path.join(destino, 'kz_cleaned.csv'), index=False)
     print("✅ Archivo limpio guardado como 'kz_cleaned.csv'")
