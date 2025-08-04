@@ -11,12 +11,12 @@ services:
     ports:
       - "6380:6379"  # puerto del host cambiado
 
-  hbase:
+    hbase:
     image: dajobe/hbase
     container_name: hbase_alt
     ports:
       - "16010:16010"
-      - "9090:9090"
+      - "9091:9090"  # Cambiado para evitar conflicto
 
   producer:
     build:
@@ -25,8 +25,8 @@ services:
     container_name: producer
     depends_on:
       - mongo
-      - redis
-      - hbase
+      - redis_alt
+      - hbase_alt
     volumes:
       - ./datos_kaggle:/data
     environment:
