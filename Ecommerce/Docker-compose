@@ -1,41 +1,43 @@
 version: "3.9"
+
 services:
-  mongodb:
-    image: mongo
+  mongo:
+    image: mongo:latest
     container_name: mongo
     ports:
       - "27017:27017"
 
   redis:
-    image: redis
+    image: redis:latest
     container_name: redis
     ports:
       - "6379:6379"
 
   hbase:
-    image: harisekhon/hbase
+    image: dajobe/hbase
     container_name: hbase
     ports:
       - "16010:16010"
       - "9090:9090"
-      - "2181:2181"
-    environment:
-      HBASE_CONF_hbase_rootdir: "/hbase"
-      HBASE_HEAPSIZE: "512"
 
   producer:
-    build:
-      context: ./producer
+    build: ./producer
     depends_on:
-      - mongodb
+      - mongo
       - redis
       - hbase
+    volumes:
+      - ./datos_kaggle:/data
+    environment:
+      - CSV_PATH=/data/kz_cleaned.csv
 
   consumer:
-    build:
-      context: ./consumer
+    build: ./consumer
     depends_on:
-      - producer
-      - mongodb
+      - mongo
       - redis
       - hbase
+    environment:
+      - MONGO_URI=mongodb://mongo:27017
+      - REDIS_HOST=redis
+      - HBASE_HOST=hbase
