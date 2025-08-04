@@ -1,3 +1,4 @@
+kaggle
 mkdir -p ~/.kaggle
 mv ~/Downloads/kaggle.json ~/.kaggle/
 chmod 600 ~/.kaggle/kaggle.json
