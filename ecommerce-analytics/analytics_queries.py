@@ -9,7 +9,7 @@ import json
 # MongoDB
 # ----------------------
 def query_mongodb():
-    client = MongoClient("mongodb://mongo:27017/")
+    client = MongoClient("mongodb://mongo:27018/")
     db = client["ecommerce"]
     collection = db["purchases"]
 
@@ -45,7 +45,7 @@ def query_mongodb():
 # Redis
 # ----------------------
 def query_redis():
-    r = redis.Redis(host="redis_alt", port=6379, decode_responses=True)
+    r = redis.Redis(host="redis_alt", port=6380, decode_responses=True)
     keys = r.keys("purchase:*")
 
     category_counter = defaultdict(int)
