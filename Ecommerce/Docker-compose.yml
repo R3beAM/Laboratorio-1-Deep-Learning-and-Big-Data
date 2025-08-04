@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   mongo:
     image: mongo:latest
@@ -5,18 +7,18 @@ services:
     ports:
       - "27018:27017"
 
-  redis:
+  redis_alt:
     image: redis:latest
     container_name: redis_alt
     ports:
       - "6380:6379"
 
-  hbase:
+  hbase_alt:
     image: dajobe/hbase
     container_name: hbase_alt
     ports:
-      - "16011:16010"  # Cambiado para evitar conflicto
-      - "9092:9090"    # Cambiado para evitar conflicto
+      - "16011:16010"
+      - "9092:9090"
 
   producer:
     build:
@@ -25,10 +27,11 @@ services:
     container_name: producer
     depends_on:
       - mongo
-      - redis
-      - hbase
+      - redis_alt
+      - hbase_alt
     volumes:
       - ./datos_kaggle:/data
+      - ./producer:/app
     environment:
       - CSV_PATH=/data/kz_cleaned.csv
 
@@ -39,9 +42,28 @@ services:
     container_name: consumer
     depends_on:
       - mongo
-      - redis
-      - hbase
+      - redis_alt
+      - hbase_alt
+    volumes:
+      - ./consumer:/app
     environment:
       - MONGO_URI=mongodb://mongo:27017
       - REDIS_HOST=redis_alt
       - HBASE_HOST=hbase_alt
+
+  analytics_queries:
+    build:
+      context: .
+      dockerfile: consumer/Dockerfile   # usa la misma imagen que consumer
+    container_name: analytics_queries
+    depends_on:
+      - mongo
+      - redis_alt
+      - hbase_alt
+    volumes:
+      - ./consumer:/app
+    environment:
+      - MONGO_URI=mongodb://mongo:27017
+      - REDIS_HOST=redis_alt
+      - HBASE_HOST=hbase_alt
+    command: ["python", "/app/analytics_queries.py"]
