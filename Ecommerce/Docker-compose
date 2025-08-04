@@ -1,0 +1,41 @@
+version: "3.9"
+services:
+  mongodb:
+    image: mongo
+    container_name: mongo
+    ports:
+      - "27017:27017"
+
+  redis:
+    image: redis
+    container_name: redis
+    ports:
+      - "6379:6379"
+
+  hbase:
+    image: harisekhon/hbase
+    container_name: hbase
+    ports:
+      - "16010:16010"
+      - "9090:9090"
+      - "2181:2181"
+    environment:
+      HBASE_CONF_hbase_rootdir: "/hbase"
+      HBASE_HEAPSIZE: "512"
+
+  producer:
+    build:
+      context: ./producer
+    depends_on:
+      - mongodb
+      - redis
+      - hbase
+
+  consumer:
+    build:
+      context: ./consumer
+    depends_on:
+      - producer
+      - mongodb
+      - redis
+      - hbase
