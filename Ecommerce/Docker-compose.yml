@@ -19,7 +19,10 @@ services:
       - "9090:9090"
 
   producer:
-    build: ./producer
+    build:
+      context: .
+      dockerfile: producer/Dockerfile
+    container_name: producer
     depends_on:
       - mongo
       - redis
@@ -30,7 +33,10 @@ services:
       - CSV_PATH=/data/kz_cleaned.csv
 
   consumer:
-    build: ./consumer
+    build:
+      context: .
+      dockerfile: consumer/Dockerfile
+    container_name: consumer
     depends_on:
       - mongo
       - redis
