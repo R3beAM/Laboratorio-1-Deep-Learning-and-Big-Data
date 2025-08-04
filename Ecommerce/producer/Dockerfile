@@ -8,4 +8,3 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY producer/producer.py /app/producer.py
 
 CMD ["python", "producer.py"]
-
