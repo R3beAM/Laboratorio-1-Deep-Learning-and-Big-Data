@@ -1,20 +1,16 @@
-import os
-import pandas as pd
-import redis
-import json
-import time
+FROM python:3.10-slim
 
-csv_path = os.getenv("CSV_PATH", "/data/kz_cleaned.csv")
-redis_client = redis.Redis(host="redis", port=6379)
+WORKDIR /app
 
-def stream_data():
-    df = pd.read_csv(csv_path, chunksize=1000)
-    for chunk in df:
-        for _, row in chunk.iterrows():
-            data = row.to_dict()
-            redis_client.rpush("kz_queue", json.dumps(data))
-        print("Batch pushed to Redis")
-        time.sleep(0.5)
+# Copiar el requirements.txt desde la raíz del proyecto
+COPY requirements.txt /app/requirements.txt
 
-if __name__ == "__main__":
-    stream_data()
+# Instalar dependencias
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copiar el archivo producer.py desde la carpeta producer/
+COPY producer/producer.py /app/producer.py
+
+# Comando por defecto
+CMD ["python", "producer.py"]
+
