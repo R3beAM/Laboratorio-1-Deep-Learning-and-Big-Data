@@ -1,15 +1,23 @@
-FROM python:3.10-slim
+import os
+import pandas as pd
+import redis
+import json
+import time
 
-WORKDIR /app
+csv_path = os.getenv("CSV_PATH", "/data/kz_cleaned.csv")
+redis_client = redis.Redis(host="redis", port=6379)
 
-# Copiar requirements.txt desde el contexto raíz (.)
-COPY requirements.txt /app/requirements.txt
+def stream_data():
+    df = pd.read_csv(csv_path, chunksize=1000)
+    for chunk in df:
+        for _, row in chunk.iterrows():
+            data = row.to_dict()
+            redis_client.rpush("kz_queue", json.dumps(data))
+        print("Batch pushed to Redis")
+        time.sleep(0.5)
 
-RUN pip install --no-cache-dir -r requirements.txt
+if __name__ == "__main__":
+    stream_data()
 
-# 👇 Esta es la línea CLAVE: copiar desde la subcarpeta `producer/`
-COPY producer/producer.py /app/producer.py
-
-CMD ["python", "producer.py"]
 
 
