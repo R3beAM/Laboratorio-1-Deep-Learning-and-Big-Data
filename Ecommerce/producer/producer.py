@@ -5,7 +5,7 @@ import json
 import time
 
 csv_path = os.getenv("CSV_PATH", "/data/kz_cleaned.csv")
-redis_client = redis.Redis(host="redis", port=6379)
+redis_client = redis.Redis(host='redis_alt', port=6379)
 
 def stream_data():
     df = pd.read_csv(csv_path, chunksize=1000)
