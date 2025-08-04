@@ -1,4 +1,0 @@
-pymongo
-redis
-happybase
-pandas
