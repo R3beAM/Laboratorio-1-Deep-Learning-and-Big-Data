@@ -3,7 +3,7 @@ services:
     image: mongo:latest
     container_name: mongo
     ports:
-      - "27017:27017"
+      - "27018:27017"  # <-- Cambiado para evitar conflicto
 
   redis:
     image: redis:latest
