@@ -50,11 +50,12 @@ services:
       - MONGO_URI=mongodb://mongo:27017
       - REDIS_HOST=redis_alt
       - HBASE_HOST=hbase_alt
+    command: ["python", "/app/consumer.py"]
 
   analytics_queries:
     build:
       context: .
-      dockerfile: consumer/Dockerfile   # usa la misma imagen que consumer
+      dockerfile: consumer/Dockerfile
     container_name: analytics_queries
     depends_on:
       - mongo
