@@ -21,7 +21,6 @@ kaggle_json_path = os.path.expanduser("~/.kaggle/kaggle.json")
 if not os.path.exists(kaggle_json_path):
     print(f"❌ No se encontró el archivo {kaggle_json_path}")
     print("➡️ Descarga tu API token desde: https://www.kaggle.com/settings")
-    print("y colócalo en esa ubicación.")
     sys.exit(1)
 
 # -------- Paso 3: Descargar el dataset --------
@@ -37,12 +36,32 @@ print("⬇️ Descargando el dataset desde Kaggle...")
 api.dataset_download_files(dataset_name, path=destino, unzip=True)
 print(f"✅ Dataset descargado en: {destino}")
 
-# -------- Paso 4: Cargar el archivo kz.csv con pandas --------
+# -------- Paso 4: Cargar y analizar 'kz.csv' --------
 csv_path = os.path.join(destino, "kz.csv")
 
 if os.path.exists(csv_path):
-    print(f"\n🧾 Leyendo 'kz.csv' con pandas...\n")
+    print(f"\n🧾 Leyendo 'kz.csv'...\n")
     df = pd.read_csv(csv_path)
+
+    # -------- Análisis básico --------
+    print("\n📋 Primeras filas del dataset:\n")
     print(df.head())
+
+    print("\n🔍 Información general:\n")
+    print(df.info())
+
+    print("\n📊 Estadísticas generales:\n")
+    print(df.describe(include='all'))
+
+    print("\n🚨 Columnas con valores nulos:\n")
+    print(df.isnull().sum())
+
+    # Análisis por columnas clave si existen
+    for col in ['category', 'product_name', 'payment_method']:
+        if col in df.columns:
+            print(f"\n📦 Conteo de valores únicos en '{col}':\n")
+            print(df[col].value_counts().head(10))
 else:
     print("❌ No se encontró el archivo 'kz.csv' en la carpeta descargada.")
+
+    
