@@ -22,7 +22,8 @@ services:
 
   producer:
     build:
-      context: ./producer
+      context: .
+      dockerfile: producer/Dockerfile
     container_name: producer
     depends_on:
       - mongo
@@ -35,13 +36,5 @@ services:
 
   consumer:
     build:
-      context: ./consumer
-    container_name: consumer
-    depends_on:
-      - mongo
-      - redis_alt
-      - hbase_alt
-    environment:
-      - MONGO_URI=mongodb://mongo:27017
-      - REDIS_HOST=redis_alt
-      - HBASE_HOST=hbase_alt
+      context: .
+      dockerfile: consumer/Dockerfil
