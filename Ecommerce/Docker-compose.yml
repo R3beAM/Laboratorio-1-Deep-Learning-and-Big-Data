@@ -9,14 +9,14 @@ services:
     image: redis:latest
     container_name: redis_alt
     ports:
-      - "6380:6379"  # Puerto cambiado para evitar conflicto
+      - "6380:6379"
 
   hbase:
     image: dajobe/hbase
     container_name: hbase_alt
     ports:
-      - "16010:16010"
-      - "9091:9090"  # Puerto cambiado para evitar conflicto
+      - "16011:16010"  # Cambiado para evitar conflicto
+      - "9092:9090"    # Cambiado para evitar conflicto
 
   producer:
     build:
