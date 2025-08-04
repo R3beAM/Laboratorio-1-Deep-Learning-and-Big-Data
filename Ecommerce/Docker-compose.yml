@@ -13,7 +13,8 @@ services:
 
   hbase:
     image: dajobe/hbase
-    container_name: hbase
+      hbase:
+    container_name: hbase_alt
     ports:
       - "16010:16010"
       - "9090:9090"
