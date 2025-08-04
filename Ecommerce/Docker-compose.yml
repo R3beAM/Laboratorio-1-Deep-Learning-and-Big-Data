@@ -37,4 +37,4 @@ services:
   consumer:
     build:
       context: .
-      dockerfile: consumer/Dockerfil
+      dockerfile: consumer/Dockerfile
