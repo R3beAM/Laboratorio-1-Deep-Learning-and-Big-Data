@@ -5,20 +5,20 @@ services:
     image: mongo
     container_name: mongo
     ports:
-      - "27017:27017"
+      - "27018:27017"
 
   redis_alt:
     image: redis
     container_name: redis_alt
     ports:
-      - "6379:6379"
+      - "6380:6379"
 
   hbase_alt:
     image: dajobe/hbase
     container_name: hbase_alt
     ports:
-      - "9090:9090"
-      - "16010:16010"
+      - "9091:9090"
+      - "16030:16010"
 
   analytics:
     build: .
