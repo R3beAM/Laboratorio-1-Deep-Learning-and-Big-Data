@@ -1,34 +1,33 @@
-version: '3.8'
+version: '3.9'
 
-services:
+services:  # <-- Todos los servicios deben ir dentro de esta sección
   hbase:
     image: harisekhon/hbase
     container_name: hbase
     ports:
-      - "16010:16010"  # Web UI
-      - "9090:9090"    # Thrift
+      - "9090:9090"
+      - "16010:16010"
     networks:
-      mynet:
-    environment:
-      HBASE_THRIFT: "yes"
+      - mynet
 
-analytics:
+  analytics:
     build:
-      context: .
+      context: ./analytics
+    container_name: analytics
     depends_on:
       - hbase
     networks:
       - mynet
+    volumes:
+      - ./datos_kaggle:/data
 
-hbase-client:
-    build:
-      context: .
+  hbase-client:
+    image: harisekhon/hbase
     container_name: hbase-client
-    depends_on:
-      - hbase
+    entrypoint: /bin/bash
+    tty: true
     networks:
-      - hbase_net
+      - mynet
 
 networks:
-  hbase_net:
-    driver: bridge
+  mynet:
