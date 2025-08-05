@@ -41,12 +41,14 @@ services:
       - HBASE_HOST=hbase
 
   analytics:
-    build: ./analytics
-    depends_on:
-      - mongo
-      - redis
-      - hbase
-    environment:
-      - MONGO_URI=mongodb://mongo:27017
-      - REDIS_HOST=redis
-      - HBASE_HOST=hbase
+  build:
+    context: .
+    dockerfile: analytics/Dockerfile
+  depends_on:
+    - mongo
+    - redis
+    - hbase
+  environment:
+    - MONGO_URI=mongodb://mongo:27017
+    - REDIS_HOST=redis
+    - HBASE_HOST=hbase
