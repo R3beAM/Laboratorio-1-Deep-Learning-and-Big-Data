@@ -20,7 +20,6 @@ services:
       - ./datos_kaggle:/app/datos_kaggle
       - ./consumer.py:/app/consumer.py
       - ./requirements.txt:/app/requirements.txt
-    working_dir: /app
     command: sh -c "pip install -r requirements.txt && python consumer.py"
     depends_on:
       - hbase
