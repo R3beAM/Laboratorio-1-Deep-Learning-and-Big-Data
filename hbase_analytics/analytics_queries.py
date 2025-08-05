@@ -29,11 +29,16 @@ for key, data in table.scan():
 
     # Consulta 3: ventas por mes
     try:
-        date = datetime.fromisoformat(event_time.replace('Z', '+00:00'))
-        month_key = f"{date.year}-{date.month:02d}"
-        monthly_sales[month_key] += 1
-    except:
-        continue
+        if event_time:
+        # Reemplazar Z por +00:00 para que lo acepte fromisoformat
+            date = datetime.fromisoformat(event_time.replace("Z", "+00:00"))
+            month_key = f"{date.year}-{date.month:02d}"
+            monthly_sales[month_key] += 1
+        else:
+        print(f"⚠️ Campo event_time vacío para key: {key}")
+    except Exception as e:
+        print(f"❌ Error al parsear fecha: '{event_time}' → {e}")
+
 
 # Resultados
 most_common_category = Counter(categories).most_common(1)[0][0]
