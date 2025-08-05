@@ -10,7 +10,7 @@ services:  # <-- Todos los servicios deben ir dentro de esta sección
 
   analytics:
     build:
-      context: ./analytics
+      context: .
     container_name: analytics
     depends_on:
       - hbase
