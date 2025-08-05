@@ -18,7 +18,7 @@ connection.open()
 if b'ventas' not in connection.tables():
     connection.create_table(
         b'ventas',
-        {b'info': dict()}
+        {'info': dict()}
     )
 
 table = connection.table('ventas')
