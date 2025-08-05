@@ -16,7 +16,7 @@ brands_income = {}
 monthly_sales = Counter()
 
 for key, data in table.scan():
-    category = data.get(b'info:category', b'').decode()
+    category = data.get(b'info:category_id', b'').decode()
     brand = data.get(b'info:brand', b'').decode()
     price = float(data.get(b'info:price', b'0').decode())
     event_time = data.get(b'info:event_time', b'').decode()
