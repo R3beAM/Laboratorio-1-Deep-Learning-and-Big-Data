@@ -3,3 +3,5 @@ redis
 happybase
 pika
 pandas
+python-dateutil
+pytz
