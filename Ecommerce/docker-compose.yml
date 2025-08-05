@@ -1,49 +1,52 @@
-version: '3.8'
-
 services:
   mongo:
     image: mongo:latest
     container_name: mongo
     ports:
-      - "27018:27017"
+      - "27017:27017"
 
-  redis_alt:
+  redis:
     image: redis:latest
-    container_name: redis_alt
+    container_name: redis
     ports:
-      - "6380:6379"
+      - "6379:6379"
 
-  hbase_alt:
+  hbase:
     image: dajobe/hbase
-    container_name: hbase_alt
+    container_name: hbase
     ports:
-      - "16011:16010"
-      - "9092:9090"
+      - "16010:16010"
+      - "9090:9090"
 
   producer:
-    build:
-      context: .
-      dockerfile: producer/Dockerfile
-    container_name: producer
+    build: ./producer
     depends_on:
       - mongo
-      - redis_alt
-      - hbase_alt
+      - redis
+      - hbase
     volumes:
       - ./datos_kaggle:/data
     environment:
       - CSV_PATH=/data/kz_cleaned.csv
 
   consumer:
-    build:
-      context: .
-      dockerfile: consumer/Dockerfile
-    container_name: consumer
+    build: ./consumer
     depends_on:
       - mongo
-      - redis_alt
-      - hbase_alt
+      - redis
+      - hbase
     environment:
       - MONGO_URI=mongodb://mongo:27017
-      - REDIS_HOST=redis_alt
-      - HBASE_HOST=hbase_alt
+      - REDIS_HOST=redis
+      - HBASE_HOST=hbase
+
+  analytics:
+    build: ./analytics
+    depends_on:
+      - mongo
+      - redis
+      - hbase
+    environment:
+      - MONGO_URI=mongodb://mongo:27017
+      - REDIS_HOST=redis
+      - HBASE_HOST=hbase
