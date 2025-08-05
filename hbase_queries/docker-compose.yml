@@ -12,7 +12,7 @@ services:
 
   hbase-client:
     build:
-      context: ./hbase_query_app
+      context: ./hbase_queries
     container_name: hbase-client
     depends_on:
       - hbase
