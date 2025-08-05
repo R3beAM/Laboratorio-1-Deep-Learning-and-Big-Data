@@ -1,5 +1,3 @@
-version: '3.9'
-
 services:  # <-- Todos los servicios deben ir dentro de esta sección
   hbase:
     image: harisekhon/hbase
