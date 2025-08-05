@@ -16,7 +16,7 @@ mongo_uri = os.getenv("MONGO_URI", "mongodb://mongo:27017")
 client = MongoClient(mongo_uri)
 
 mongo_db = client["ecommerce"]
-mongo_col = mongo_db["purchase_history"]
+mongo_col = mongo_db["ventas"]
 
 # --- Conexión a Redis ---
 redis_client = redis.Redis(host="localhost", port=6379)
