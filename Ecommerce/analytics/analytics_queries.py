@@ -9,7 +9,12 @@ from dateutil import parser
 import pytz
 
 # --- Conexión a MongoDB ---
-mongo = MongoClient("mongodb://localhost:27017")
+import os
+from pymongo import MongoClient
+
+mongo_uri = os.getenv("MONGO_URI", "mongodb://mongo:27017")
+client = MongoClient(mongo_uri)
+
 mongo_db = mongo["ecommerce"]
 mongo_col = mongo_db["purchase_history"]
 
