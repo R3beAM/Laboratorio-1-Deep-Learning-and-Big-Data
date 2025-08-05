@@ -1,30 +1,36 @@
-import happybase
+import os
 import pandas as pd
+import happybase
 import time
 
 # Esperar a que HBase esté listo
 time.sleep(10)
 
+# Ruta al archivo CSV dentro del contenedor
+csv_path = os.path.join("datos_kaggle", "kz_cleaned.csv")
+df = pd.read_csv(csv_path)
+
+# Conexión con HBase
 connection = happybase.Connection(host='hbase', port=9090)
 connection.open()
 
+# Crear tabla si no existe
 if b'ventas' not in connection.tables():
     connection.create_table(
         b'ventas',
-        {'info': dict()}
+        {b'info': dict()}
     )
 
 table = connection.table('ventas')
 
-df = pd.read_csv(/datos_kaggle/kz_cleaned.csv')
-
-for idx, row in df.iterrows():
-    row_key = f"row{idx}"
-    table.put(f'row{i}', {
-        b'info:category': str(row['category']).encode(),  # ✅ valor str convertido a bytes
-        b'info:brand': str(row['brand']).encode(),
-        b'info:price': str(row['price']).encode(),
-        b'info:event_time': str(row['event_time']).encode()
+# Insertar datos fila por fila
+for i, row in df.iterrows():
+    table.put(f"row{i}", {
+        b'info:category': str(row["category"]).encode(),
+        b'info:brand': str(row["brand"]).encode(),
+        b'info:price': str(row["price"]).encode(),
+        b'info:event_time': str(row["event_time"]).encode()
     })
 
-print("✅ Datos insertados en HBase.")
+print("✅ Datos cargados correctamente en HBase.")
+
