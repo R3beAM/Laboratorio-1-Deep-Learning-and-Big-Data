@@ -7,8 +7,19 @@ services:
     ports:
       - "16010:16010"  # Web UI
       - "9090:9090"    # Thrift
+    networks:
+      mynet:
     environment:
       HBASE_THRIFT: "yes"
+
+analytics:
+    build:
+      context: .
+    depends_on:
+      - hbase
+    networks:
+      - mynet
+
 
   hbase-client:
     build:
