@@ -16,7 +16,7 @@ if b'ventas' not in connection.tables():
 
 table = connection.table('ventas')
 
-df = pd.read_csv('hbase_analytics/datos_kaggle/kz_cleaned.csv')
+df = pd.read_csv(/datos_kaggle/kz_cleaned.csv')
 
 for idx, row in df.iterrows():
     row_key = f"row{idx}"
