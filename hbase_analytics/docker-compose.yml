@@ -2,28 +2,47 @@ services:
   hbase:
     image: harisekhon/hbase
     platform: linux/amd64
+    container_name: hbase
     ports:
       - "16010:16010"
       - "9090:9090"
     environment:
-      HBASE_MANAGES_ZK: "true"
+      - HBASE_CONF_hbase_regionserver_hostname=hbase
+    networks:
+      - hbase_net
 
   consumer:
     image: python:3.10
+    container_name: consumer
     working_dir: /app
     volumes:
+      - .:/app
+      - ./datos_kaggle:/app/datos_kaggle
       - ./consumer.py:/app/consumer.py
       - ./requirements.txt:/app/requirements.txt
-    command: /bin/sh -c "pip install -r requirements.txt && python consumer.py"
+    working_dir: /app
+    command: sh -c "pip install -r requirements.txt && python consumer.py"
     depends_on:
       - hbase
+    networks:
+      - hbase_net
 
   analytics:
     image: python:3.10
+    container_name: analytics
     volumes:
+      - .:/app
       - ./analytics_queries.py:/app/analytics_queries.py
       - ./requirements.txt:/app/requirements.txt
     working_dir: /app
-    command: /bin/sh -c "pip install -r requirements.txt && python analytics_queries.py"
+    command: sh -c "pip install -r requirements.txt && python analytics_queries.py"
     depends_on:
       - hbase
+    networks:
+      - hbase_net
+
+networks:
+  hbase_net:
+
+
+ 
