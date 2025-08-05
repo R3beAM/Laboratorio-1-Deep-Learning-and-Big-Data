@@ -2,6 +2,7 @@ import os
 import pandas as pd
 import happybase
 import time
+from collections import Counter
 
 # Esperar a que HBase esté listo
 time.sleep(10)
