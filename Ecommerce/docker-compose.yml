@@ -12,11 +12,12 @@ services:
       - "6379:6379"
 
   hbase:
-    image: dajobe/hbase
+    image: harisekhon/hbase
     container_name: hbase
     ports:
-      - "16010:16010"
-      - "9090:9090"
+      - "16010:16010"  # UI web de HBase
+      - "9090:9090"    # Thrift para HappyBase
+
 
   producer:
     build: ./producer
