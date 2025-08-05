@@ -15,7 +15,7 @@ from pymongo import MongoClient
 mongo_uri = os.getenv("MONGO_URI", "mongodb://mongo:27017")
 client = MongoClient(mongo_uri)
 
-mongo_db = mongo["ecommerce"]
+mongo_db = client["ecommerce"]
 mongo_col = mongo_db["purchase_history"]
 
 # --- Conexión a Redis ---
