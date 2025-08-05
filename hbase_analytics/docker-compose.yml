@@ -1,6 +1,7 @@
 services:
   hbase:
     image: harisekhon/hbase
+    platform: linux/amd64
     ports:
       - "16010:16010"
       - "9090:9090"
