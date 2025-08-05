@@ -17,7 +17,10 @@ mongo_col = mongo_db["purchase_history"]
 redis_client = redis.Redis(host="localhost", port=6379)
 
 # --- Conexión a HBase ---
-hbase = happybase.Connection(host="localhost", port=9090)
+import os
+
+hbase = happybase.Connection(host=os.getenv("HBASE_HOST", "hbase"), port=9090)
+
 hbase_table = hbase.table("purchase_history")
 
 # ===============================
