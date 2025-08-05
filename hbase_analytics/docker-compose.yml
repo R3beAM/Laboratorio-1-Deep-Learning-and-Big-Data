@@ -1,50 +1,28 @@
+version: '3.8'
+
 services:
   hbase:
     image: harisekhon/hbase
-    container_name: hbase
     ports:
+      - "16010:16010"
       - "9090:9090"
     environment:
-      HBASE_THRIFT_PORT: 9090
-      HBASE_THRIFT_COMPAT: 1
-
-  requirements:
-    image: python:3.10
-    container_name: requirements
-    volumes:
-      - ./requirements:/requirements
-    working_dir: /requirements
-    command: pip install -r requirements.txt
-
-  producer:
-    image: python:3.10
-    container_name: producer
-    depends_on:
-      - hbase
-      - requirements
-    volumes:
-      - ./producer:/app
-      - ./data:/data
-    working_dir: /app
-    command: python producer.py
+      HBASE_MANAGES_ZK: "true"
 
   consumer:
     image: python:3.10
-    container_name: consumer
+    working_dir: /app
+    volumes:
+      - .:/app
+    command: python consumer.py
     depends_on:
       - hbase
-      - producer
-    volumes:
-      - ./consumer:/app
-    working_dir: /app
-    command: python consumer.py
 
   analytics:
     image: python:3.10
-    container_name: analytics
+    working_dir: /app
+    volumes:
+      - .:/app
+    command: python analytics_queries.py
     depends_on:
       - hbase
-    volumes:
-      - ./analytics:/app
-    working_dir: /app
-    command: python analytics_queries.py
