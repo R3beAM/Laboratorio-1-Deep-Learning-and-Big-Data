@@ -1,140 +1,120 @@
 import os
-from pymongo import MongoClient
+import pymongo
 import redis
 import happybase
-import json
-from collections import defaultdict
 from datetime import datetime
-from dateutil import parser
-import pytz
+from collections import defaultdict, Counter
+
+# --- Configuración de conexiones ---
+MONGO_URI = os.getenv("MONGO_URI", "mongodb://mongo:27017")
+REDIS_HOST = os.getenv("REDIS_HOST", "redis")
+HBASE_HOST = os.getenv("HBASE_HOST", "hbase")
 
 # --- Conexión a MongoDB ---
-import os
-from pymongo import MongoClient
-
-mongo_uri = os.getenv("MONGO_URI", "mongodb://mongo:27017")
-client = MongoClient(mongo_uri)
-
-mongo_db = client["ecommerce"]
-mongo_col = mongo_db["ventas"]
+mongo_client = pymongo.MongoClient(MONGO_URI)
+mongo_db = mongo_client["ecommerce"]
+mongo_collection = mongo_db["ventas"]
 
 # --- Conexión a Redis ---
-redis_client = redis.Redis(host="localhost", port=6379)
+redis_client = redis.StrictRedis(host=REDIS_HOST, port=6379, decode_responses=True)
 
 # --- Conexión a HBase ---
-import os
-
-hbase = happybase.Connection(host=os.getenv("HBASE_HOST", "hbase"), port=9090)
-
-hbase_table = hbase.table("purchase_history")
-
-# ===============================
-#         MONGO QUERIES
-# ===============================
-
-def mongo_queries():
-    print("\n--- MongoDB ---")
-
-    # 1. Categoría más vendida
-    top_category = mongo_col.aggregate([
-        {"$group": {"_id": "$category_code", "count": {"$sum": 1}}},
-        {"$sort": {"count": -1}}, {"$limit": 1}
-    ])
-    print("Categoría más vendida:", list(top_category)[0])
-
-    # 2. Marca con más ingresos brutos
-    top_brand = mongo_col.aggregate([
-        {"$group": {"_id": "$brand", "total": {"$sum": "$price"}}},
-        {"$sort": {"total": -1}}, {"$limit": 1}
-    ])
-    print("Marca con más ingresos:", list(top_brand)[0])
-
-    # 3. Mes con más ventas (UTC)
-    top_month = mongo_col.aggregate([
-        {"$addFields": {
-            "month": {"$dateToString": {"format": "%Y-%m", "date": {"$toDate": "$event_time"}}}
-        }},
-        {"$group": {"_id": "$month", "count": {"$sum": 1}}},
-        {"$sort": {"count": -1}}, {"$limit": 1}
-    ])
-    print("Mes con más ventas:", list(top_month)[0])
-
-# ===============================
-#         REDIS QUERIES
-# ===============================
-
-def redis_queries():
-    print("\n--- Redis ---")
-
-    keys = redis_client.keys("processed:*")  # Suponiendo que almacenaste los datos con claves "processed:<id>"
-    if not keys:
-        print("No hay datos analíticos en Redis.")
-        return
-
-    category_counter = defaultdict(int)
-    brand_revenue = defaultdict(float)
-    month_sales = defaultdict(int)
-
-    for key in keys:
-        data = redis_client.get(key)
-        if not data:
-            continue
-        record = json.loads(data)
-
-        category = record.get("category_code")
-        brand = record.get("brand")
-        price = float(record.get("price", 0))
-        time_str = record.get("event_time")
-
-        category_counter[category] += 1
-        brand_revenue[brand] += price
-
-        if time_str:
-            dt = parser.parse(time_str).astimezone(pytz.utc)
-            month = dt.strftime("%Y-%m")
-            month_sales[month] += 1
-
-    print("Categoría más vendida:", max(category_counter, key=category_counter.get))
-    print("Marca con más ingresos:", max(brand_revenue, key=brand_revenue.get))
-    print("Mes con más ventas:", max(month_sales, key=month_sales.get))
-
-# ===============================
-#         HBASE QUERIES
-# ===============================
-
-def hbase_queries():
-    print("\n--- HBase ---")
-
-    category_counter = defaultdict(int)
-    brand_revenue = defaultdict(float)
-    month_sales = defaultdict(int)
-
-    for key, data in hbase_table.scan():
-        row = {k.decode().split(":")[1]: v.decode() for k, v in data.items()}
-
-        category = row.get("category_code")
-        brand = row.get("brand")
-        price = float(row.get("price", 0))
-        time_str = row.get("event_time")
-
-        category_counter[category] += 1
-        brand_revenue[brand] += price
-
-        if time_str:
-            dt = parser.parse(time_str).astimezone(pytz.utc)
-            month = dt.strftime("%Y-%m")
-            month_sales[month] += 1
-
-    print("Categoría más vendida:", max(category_counter, key=category_counter.get))
-    print("Marca con más ingresos:", max(brand_revenue, key=brand_revenue.get))
-    print("Mes con más ventas:", max(month_sales, key=month_sales.get))
+hbase = happybase.Connection(host=HBASE_HOST, port=9090)
+hbase.open()
+hbase_table = hbase.table("ventas")  # Asegúrate que esta tabla exista y tenga data
 
 
-# ===============================
-#             MAIN
-# ===============================
+# =======================
+# --- CONSULTAS ---
+# =======================
 
-if __name__ == "__main__":
-    mongo_queries()
-    redis_queries()
-    hbase_queries()
+print("---- CONSULTAS EN MONGODB ----")
+
+# 1. ¿Cuál es la categoría más vendida?
+most_sold_category = mongo_collection.aggregate([
+    {"$group": {"_id": "$category", "count": {"$sum": 1}}},
+    {"$sort": {"count": -1}},
+    {"$limit": 1}
+])
+for doc in most_sold_category:
+    print("Categoría más vendida:", doc["_id"], "-", doc["count"], "ventas")
+
+# 2. ¿Qué marca generó más ingresos brutos?
+top_brand = mongo_collection.aggregate([
+    {"$group": {"_id": "$brand", "total_ingresos": {"$sum": "$price"}}},
+    {"$sort": {"total_ingresos": -1}},
+    {"$limit": 1}
+])
+for doc in top_brand:
+    print("Marca con más ingresos:", doc["_id"], "-", round(doc["total_ingresos"], 2), "USD")
+
+# 3. ¿Qué mes tuvo más ventas? (en UTC)
+ventas_por_mes = mongo_collection.aggregate([
+    {"$group": {
+        "_id": {"$substr": ["$event_time", 0, 7]},  # YYYY-MM
+        "count": {"$sum": 1}
+    }},
+    {"$sort": {"count": -1}},
+    {"$limit": 1}
+])
+for doc in ventas_por_mes:
+    print("Mes con más ventas:", doc["_id"], "-", doc["count"], "ventas")
+
+
+print("\n---- CONSULTAS EN REDIS ----")
+# Redis suele almacenar datos como clave-valor, asumiremos claves tipo venta:<id>
+# Esto requiere que hayas insertado datos previamente con claves significativas
+
+ventas_keys = redis_client.keys("venta:*")
+
+categorias = Counter()
+brands = defaultdict(float)
+meses = Counter()
+
+for key in ventas_keys:
+    venta = redis_client.hgetall(key)
+    if venta:
+        categorias[venta.get("category", "")] += 1
+        brands[venta.get("brand", "")] += float(venta.get("price", 0))
+        fecha = venta.get("event_time", "")
+        if fecha:
+            mes = fecha[:7]
+            meses[mes] += 1
+
+if categorias:
+    print("Categoría más vendida:", categorias.most_common(1)[0])
+if brands:
+    top_brand = max(brands.items(), key=lambda x: x[1])
+    print("Marca con más ingresos:", top_brand[0], "-", round(top_brand[1], 2), "USD")
+if meses:
+    top_month = meses.most_common(1)[0]
+    print("Mes con más ventas:", top_month[0], "-", top_month[1], "ventas")
+
+
+print("\n---- CONSULTAS EN HBASE ----")
+# Suponemos que las columnas están en 'info:category', 'info:brand', 'info:price', 'info:event_time'
+
+categorias_hb = Counter()
+brands_hb = defaultdict(float)
+meses_hb = Counter()
+
+for key, data in hbase_table.scan():
+    category = data.get(b'info:category', b'').decode()
+    brand = data.get(b'info:brand', b'').decode()
+    price = float(data.get(b'info:price', b'0').decode())
+    event_time = data.get(b'info:event_time', b'').decode()
+
+    categorias_hb[category] += 1
+    brands_hb[brand] += price
+    if event_time:
+        mes = event_time[:7]
+        meses_hb[mes] += 1
+
+if categorias_hb:
+    print("Categoría más vendida:", categorias_hb.most_common(1)[0])
+if brands_hb:
+    top_brand = max(brands_hb.items(), key=lambda x: x[1])
+    print("Marca con más ingresos:", top_brand[0], "-", round(top_brand[1], 2), "USD")
+if meses_hb:
+    top_month = meses_hb.most_common(1)[0]
+    print("Mes con más ventas:", top_month[0], "-", top_month[1], "ventas")
