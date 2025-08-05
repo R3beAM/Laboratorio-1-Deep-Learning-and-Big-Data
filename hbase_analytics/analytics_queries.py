@@ -35,7 +35,7 @@ for key, data in table.scan():
             month_key = f"{date.year}-{date.month:02d}"
             monthly_sales[month_key] += 1
         else:
-        print(f"⚠️ Campo event_time vacío para key: {key}")
+            print(f"⚠️ Campo event_time vacío para key: {key}")
     except Exception as e:
         print(f"❌ Error al parsear fecha: '{event_time}' → {e}")
 
