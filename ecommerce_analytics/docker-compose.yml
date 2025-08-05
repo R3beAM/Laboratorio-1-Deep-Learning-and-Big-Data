@@ -1,0 +1,9 @@
+  analytics_queries:
+    build:
+      context: .
+      dockerfile: analytics_queries/Dockerfile
+    depends_on:
+      - mongo
+      - redis_alt
+      - hbase_alt
+    container_name: analytics_queries
