@@ -14,7 +14,6 @@ services:
     volumes:
       - ./consumer.py:/app/consumer.py
       - ./requirements.txt:/app/requirements.txt
-    working_dir: /app
     command: /bin/sh -c "pip install -r requirements.txt && python consumer.py"
     depends_on:
       - hbase
