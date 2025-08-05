@@ -1,10 +1,15 @@
+# Imagen base
 FROM python:3.10-slim
 
+# Establece el directorio de trabajo
 WORKDIR /app
 
-COPY requirements.txt /app/requirements.txt
+# Copia los archivos de requirements y código al contenedor
+COPY requirements.txt .
+COPY producer.py .
+
+# Instala las dependencias
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY producer/producer.py /app/producer.py
-
+# Ejecuta el script
 CMD ["python", "producer.py"]
