@@ -1,24 +1,19 @@
-import os
 import pandas as pd
 from pymongo import MongoClient
 
-def main():
-    # Leer CSV
-    csv_path = os.path.join("datos_kaggle", "kz_cleaned.csv")
-    df = pd.read_csv(csv_path)
+# Leer el CSV
+df = pd.read_csv("datos_kaggle/kz_cleaned.csv")
 
-    # Conexión a MongoDB
-    client = MongoClient("mongodb://mongo:27017/")
-    db = client.kz
-    collection = db.ventas
+# Conexión a MongoDB
+client = MongoClient("mongodb://mongodb:27017/")
+db = client.kz
+collection = db.ventas
 
-    # Limpiar colección antes de insertar (opcional)
-    collection.delete_many({})
+# Limpiar la colección si ya tiene datos
+collection.delete_many({})
 
-    # Insertar documentos
-    records = df.to_dict(orient='records')
-    collection.insert_many(records)
-    print(f"✅ Insertados {len(records)} registros en MongoDB.")
+# Insertar datos
+collection.insert_many(df.to_dict(orient="records"))
 
-if __name__ == "__main__":
-    main()
+print("✅ Datos insertados en MongoDB")
+
