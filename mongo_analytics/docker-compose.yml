@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  mongo:
+    image: mongo:latest
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - mongo_net
+
+  producer:
+    image: python:3.10
+    container_name: producer
+    working_dir: /app
+    volumes:
+      - .:/app
+      - ./datos_kaggle:/app/datos_kaggle
+    command: sh -c "pip install -r requirements.txt && python producer.py"
+    depends_on:
+      - mongo
+    networks:
+      - mongo_net
+
+  consumer:
+    image: python:3.10
+    container_name: consumer
+    working_dir: /app
+    volumes:
+      - .:/app
+    command: sh -c "pip install -r requirements.txt && python consumer.py"
+    depends_on:
+      - mongo
+    networks:
+      - mongo_net
+
+  analytics:
+    image: python:3.10
+    container_name: analytics
+    working_dir: /app
+    volumes:
+      - .:/app
+    command: sh -c "pip install -r requirements.txt && python analytics_queries.py"
+    depends_on:
+      - mongo
+    networks:
+      - mongo_net
+
+volumes:
+  mongo_data:
+
+networks:
+  mongo_net:
