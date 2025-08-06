@@ -54,7 +54,8 @@ services:
     networks:
       - hbase_net
 
-    check:
+  check:
+    
     image: python:3.10
     container_name: check
     working_dir: /app
