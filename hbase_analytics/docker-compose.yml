@@ -11,6 +11,20 @@ services:
     networks:
       - hbase_net
 
+  producer:
+    image: python:3.10
+    working_dir: /app
+    volumes:
+      - .:/app
+      - ./datos_kaggle:/app/datos_kaggle
+      - ./producer.py:/app/producer.py
+      - ./requirements.txt:/app/requirements.txt
+    command: sh -c "pip install -r requirements.txt && python consumer.py"
+    depends_on:
+      - hbase
+    networks:
+      - hbase_net
+
   consumer:
     image: python:3.10
     container_name: consumer
