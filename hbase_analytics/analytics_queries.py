@@ -40,10 +40,20 @@ for key, data in table.scan():
         print(f"❌ Error al parsear fecha: '{event_time}' → {e}")
 
 # Resultados
-        most_common_category = Counter(categories).most_common(1)[0][0]
-        top_brand = max(brands_income.items(), key=lambda x: x[1])[0]
-        top_month = monthly_sales.most_common(1)[0][0]
+if categories:
+    most_common_category = Counter(categories).most_common(1)[0][0]
+    print(f"✅ Categoría más vendida: {most_common_category}")
+else:
+    print("⚠️ No se encontraron categorías.")
 
-print(f"✅ Categoría más vendida: {most_common_category}")
-print(f"✅ Marca con más ingresos brutos: {top_brand}")
-print(f"✅ Mes con más ventas (UTC): {top_month}")
+if brands_income:
+    top_brand = max(brands_income.items(), key=lambda x: x[1])[0]
+    print(f"✅ Marca con más ingresos brutos: {top_brand}")
+else:
+    print("⚠️ No se encontraron marcas o ingresos.")
+
+if monthly_sales:
+    top_month = monthly_sales.most_common(1)[0][0]
+    print(f"✅ Mes con más ventas (UTC): {top_month}")
+else:
+    print("⚠️ No se encontraron ventas mensuales.")
