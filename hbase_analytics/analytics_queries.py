@@ -39,11 +39,10 @@ for key, data in table.scan():
     except Exception as e:
         print(f"❌ Error al parsear fecha: '{event_time}' → {e}")
 
-
 # Resultados
-most_common_category = Counter(categories).most_common(1)[0][0]
-top_brand = max(brands_income.items(), key=lambda x: x[1])[0]
-top_month = monthly_sales.most_common(1)[0][0]
+        most_common_category = Counter(categories).most_common(1)[0][0]
+        top_brand = max(brands_income.items(), key=lambda x: x[1])[0]
+        top_month = monthly_sales.most_common(1)[0][0]
 
 print(f"✅ Categoría más vendida: {most_common_category}")
 print(f"✅ Marca con más ingresos brutos: {top_brand}")
