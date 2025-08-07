@@ -1,1 +1,32 @@
+version: "3.9"
 
+services:
+  mongo:
+    image: mongo:latest
+    container_name: mongo
+    ports:
+      - "27017:27017"
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+
+  version: '3.8'
+
+  hbase:
+    image: dajobe/hbase
+    container_name: hbase
+    ports:
+      - "16010:16010"   # Web UI
+      - "9090:9090"     # Thrift
+      - "2181:2181"     # Zookeeper
+    environment:
+      - HBASE_MANAGES_ZK=true
+    command: >
+      bash -c "
+        /opt/hbase/bin/start-hbase.sh &&
+        /opt/hbase/bin/hbase-daemon.sh start thrift &&
+        tail -f /dev/null
+      "
