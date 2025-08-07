@@ -1,12 +1,9 @@
 import happybase
-import pandas as pd
-from collections import Counter
-from datetime import datetime
-import time
 import csv
 
-#Paso 1: Cargar csv
-hbase thrift start
+# Asegúrate de iniciar el servidor Thrift de HBase por separado
+# antes de ejecutar este script. Ejemplo:
+#   hbase thrift start
 
 # Conexión a HBase vía Thrift (puerto 9090 por defecto)
 connection = happybase.Connection('localhost', port=9090)
