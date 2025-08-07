@@ -3,3 +3,4 @@ redis
 happybase
 pika
 pandas
+setuptools
