@@ -21,7 +21,14 @@ services:
       - "9090:9090"    # Thrift API
       - "2181:2181"    # Zookeeper
     environment:
+      - HBASE_CONF_hbase_rootdir=/data/hbase
       - HBASE_THRIFT=true
+    command: >
+      sh -c "
+        /entrypoint.sh &&
+        sleep 5 &&
+        hbase thrift start -p 9090 --infoport 9095
+      "  
     volumes:
       - hbase-data:/data
 
