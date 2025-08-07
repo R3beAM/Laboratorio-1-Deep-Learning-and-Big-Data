@@ -8,6 +8,9 @@ df = pd.read_csv('kz.csv')
 print("\n✅ Primeras filas del dataset:\n")
 print(df.head())
 
+# Convertir la primera columna (event_time) a formato datetime
+df.iloc[:, 0] = pd.to_datetime(df.iloc[:, 0])
+
 
 
 #Conectar a la base de datos
@@ -80,24 +83,13 @@ for doc in resultado:
 #   { $sort: { total_ventas: -1 } },
 #   { $limit: 1 }
 # ])
-#Modificar la fecha para formato datetime.datetime
+# event_time ya está en formato datetime, se extraen mes y año
 # ------------------------------------------------------------------------------
 resultado = collection.aggregate([
-   {
-        "$addFields": {
-            "event_date": {
-                "$dateFromString": {
-                    "dateString": "$event_time",
-                    "format": "%Y-%m-%d %H:%M:%S %Z",
-                    "timezone": "UTC"
-                }
-            }
-        }
-    },
     {
         "$project": {
-            "mes": {"$month": "$event_date"},
-            "anio": {"$year": "$event_date"}
+            "mes": {"$month": "$event_time"},
+            "anio": {"$year": "$event_time"}
         }
     },
     {
