@@ -20,7 +20,7 @@ if table_name.encode() not in connection.tables():
 table = connection.table(table_name)
 
 # Leer el CSV
-with open('kz_cleaned.csv', newline='', encoding='utf-8') as csvfile:
+with open('kz.csv', newline='', encoding='utf-8') as csvfile:
     reader = csv.DictReader(csvfile)
     
     for i, row in enumerate(reader):
