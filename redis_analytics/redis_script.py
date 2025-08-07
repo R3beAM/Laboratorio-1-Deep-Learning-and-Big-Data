@@ -1,7 +1,9 @@
 """Cargar datos de ventas en Redis y realizar consultas básicas.
 
-Este script lee ``kz.csv`` desde la raíz del repositorio, almacena
-estadísticas en Redis y responde a las siguientes preguntas:
+Este script usa directamente ``kz.csv`` en la raíz del repositorio
+sin depender de descargas de Kaggle ni de archivos intermedios
+como ``kz_cleaned.csv``. Almacena estadísticas en Redis y responde a
+las siguientes preguntas:
 
 1. ¿Cuál es la categoría más vendida?
 2. ¿Qué marca generó más ingresos brutos?
