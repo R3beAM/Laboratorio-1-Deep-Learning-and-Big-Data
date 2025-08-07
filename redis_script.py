@@ -16,14 +16,14 @@ from pathlib import Path
 import pandas as pd
 from redis import Redis
 
+# Cargar el CSV
+df = pd.read_csv('kz.csv')
+print("\n✅ Primeras filas del dataset:\n")
+print(df.head())
+
 # Conexión a Redis
 redis = Redis(host="localhost", port=6379, decode_responses=True)
 
-# Ruta al archivo CSV (kz.csv en la raíz del repositorio)
-CSV_PATH = Path(__file__).resolve().parent.parent / "kz.csv"
-
-# Cargar el CSV
-df = pd.read_csv(CSV_PATH)
 
 # Normalizar nombres de columnas
 df.columns = df.columns.str.strip().str.lower()
