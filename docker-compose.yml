@@ -14,23 +14,16 @@ services:
       - "6379:6379"
 
   hbase:
-    image: harisekhon/hbase:latest
+    image: bitnami/hbase:latest
     container_name: hbase
     ports:
       - "16010:16010"  # Web UI
       - "9090:9090"    # Thrift API
       - "2181:2181"    # Zookeeper
     environment:
-      - HBASE_CONF_hbase_rootdir=/data/hbase
-      - HBASE_THRIFT=true
-    command: >
-      sh -c "
-        /entrypoint.sh &&
-        sleep 5 &&
-        hbase thrift start -p 9090 --infoport 9095
-      "  
+      - HBASE_ENABLE_THRIFT=true
     volumes:
-      - hbase-data:/data
+      - hbase-data:/bitnami/hbase
 
   hbase-client:
     image: python:3.10-slim
