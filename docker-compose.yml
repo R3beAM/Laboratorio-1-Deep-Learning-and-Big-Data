@@ -14,14 +14,20 @@ services:
       - "6379:6379"
 
   hbase:
-    image: bitnami/hbase:latest
+    image: dajobe/hbase
     container_name: hbase
     ports:
-      - "16010:16010"  # Web UI
-      - "9090:9090"    # Thrift API
-      - "2181:2181"    # Zookeeper
+      - "16010:16010"   # Web UI
+      - "9090:9090"     # Thrift
+      - "2181:2181"     # Zookeeper
     environment:
-      - HBASE_ENABLE_THRIFT=true
+      - HBASE_MANAGES_ZK=true
+    command: >
+      bash -c "
+        /opt/hbase/bin/start-hbase.sh &&
+        /opt/hbase/bin/hbase-daemon.sh start thrift &&
+        tail -f /dev/null
+      "
     volumes:
       - hbase-data:/bitnami/hbase
 
