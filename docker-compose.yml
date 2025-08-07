@@ -1,3 +1,5 @@
+version: "3.8"
+
 services:
   mongo:
     image: mongo:latest
@@ -28,9 +30,11 @@ services:
     container_name: hbase-client
     depends_on:
       - hbase
+    working_dir: /app
     volumes:
-      - ./hbase-client:/app
-   
+      - ./hbase_analytics:/app
+    command: tail -f /dev/null
+
 
 volumes:
   hbase-data:
